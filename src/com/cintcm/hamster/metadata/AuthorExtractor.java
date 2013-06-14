@@ -8,12 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Scanner;
 
-import org.apache.pdfbox.exceptions.InvalidPasswordException;
 import org.apache.pdfbox.pdfparser.PDFParser;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
-
-import com.cintcm.hamster.metadata.pdf.TitleExtractor;
 
 public class AuthorExtractor {
 
