@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.cintcm.hamster.db.tcmls.TTerm;
 
-public class testTCMTermDecider {
+public class TCMTermDeciderTester {
 
 	
 	

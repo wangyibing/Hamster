@@ -63,7 +63,7 @@ public class RelationRenderer {
 		
 		HSSFCell value = row.createCell(3);
 		value.setCellType(HSSFCell.CELL_TYPE_STRING);
-		value.setCellValue("价值");
+		value.setCellValue("综合评分");
 		
 		HSSFCell txt = row.createCell(4);
 		txt.setCellType(HSSFCell.CELL_TYPE_STRING);

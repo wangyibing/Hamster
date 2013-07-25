@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -25,7 +26,17 @@ import com.cintcm.hamster.db.tcmls.TTerm;
 
 public class Utils {
 	private static Complex complex = new Complex();
-	public static List<String> setWords(String txt){		
+	
+	public static List<List<String>> breakSentence(String txt){
+		StringTokenizer st = new StringTokenizer(txt,",，;；");
+		List<List<String>> words = new ArrayList<List<String>>();
+	    while(st.hasMoreTokens() ){
+	    	words.add(splitWords(st.nextToken()));
+	    }
+	    return words;
+	}
+	
+	public static List<String> splitWords(String txt){		
 		String rst = "";
 		try {
 			rst = complex.segWords(txt, "|");
@@ -36,12 +47,12 @@ public class Utils {
 		return Arrays.asList(rst.split("\\|"));
 	}
 	
-	public static String[] breakIntoSentences(String  paragraph){
+	public static String[] breakParagraphIntoSentences(String  paragraph){
 		String sentences[] = paragraph.split("[。]");
 		return sentences;
 	}
 	
-	public static String[] breakIntoSentences(File file){
+	public static String[] breakFileIntoSentences(File file){
 		StringBuilder sb = new StringBuilder();
 		Scanner scanner;
 		try {

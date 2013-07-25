@@ -14,14 +14,14 @@ import java.util.Set;
  * @author asus
  * 
  */
-public class VerbDecider {
+public class TCMNounDecider {
 
 	protected static Set<String> dic = new HashSet<String>();
 
 	static {
 		Scanner sc;
 		try {
-			sc = new Scanner(new File("data/words-verb.dic"));
+			sc = new Scanner(new File("data/words-tcm.dic"));
 			while (sc.hasNextLine()) {
 				String s = sc.nextLine();
 				dic.add(s);

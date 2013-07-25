@@ -13,15 +13,26 @@ public class SimpleRelationExtractorTest {
 
 	@Test
 	public void testGetRelationsFromFile() {
-		File doc = new File("data/dataset1/百度百科-人参.txt");
+		File doc = new File("data/relations/百度百科-人参.txt");
 		List<Relation> rels = SimpleRelationExtractor.getRelations(doc, "百度百科-人参");
 		
-		File file = new File("data/dataset1/百度百科-人参.xls");
+		File file = new File("data/relations/百度百科-人参_results.xls");
 		new RelationRenderer(rels, file).outputFile();
 
 	}
 	
 	@Test
+	public void testGetRelationsFromFile1() {
+		File doc = new File("data/relations/_伤寒论_方治疗慢性胃炎.txt");
+		List<Relation> rels = SimpleRelationExtractor.getRelations(doc, "_伤寒论_方治疗慢性胃炎");
+		
+		File file = new File("data/relations/_伤寒论_方治疗慢性胃炎_results.xls");
+		new RelationRenderer(rels, file).outputFile();
+
+	}
+	
+	
+	//@Test
 	public void testGetRelationsFromExcel() {
 		
 		File doc = new File("data/relations/example.xls");
@@ -31,5 +42,18 @@ public class SimpleRelationExtractorTest {
 		new RelationRenderer(rels, file).outputFile();
 
 	}
+	
+	
+	
+	@Test
+	public void testGetRelationsFromExcel2() {
+		
+		File doc = new File("data/relations/贾李蓉小样.xls");
+		List<Relation> rels = SimpleRelationExtractor.getRelationsFromExcel(doc);
+		
+		File file = new File("data/relations/贾李蓉小样_results.xls");
+		new RelationRenderer(rels, file).outputFile();
 
+	}
+	
 }
