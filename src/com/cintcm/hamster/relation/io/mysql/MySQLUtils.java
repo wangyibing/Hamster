@@ -50,6 +50,7 @@ public class MySQLUtils {
 						+ "','" + rel.getPredicate() + "','" + rel.getObject()
 						+ "','" + rel.getValue() + "','" + rel.getText()
 						+ "','" + rel.getDocId() + "')";*/
+						
 				String sql = "insert into " + table + " values('" + rel.getSubject()
 				+ "','" + rel.getPredicate() + "','" + rel.getObject()
 				+ "','" + rel.getValue() + "','','" + rel.getDocId() + "')";

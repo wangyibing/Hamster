@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.cintcm.hamster.relation.HasCoreRelationExtractor;
+import com.cintcm.hamster.relation.LooseRelationExtractor;
 import com.cintcm.hamster.relation.Relation;
 import com.cintcm.hamster.relation.SimpleRelationExtractor;
+import com.cintcm.hamster.relation.Utils;
 import com.cintcm.hamster.relation.io.excel.RelationRenderer;
 import com.cintcm.hamster.relation.io.mysql.MySQLUtils;
 
@@ -38,16 +41,28 @@ public class Jia {
 			Statement stmt = conn.createStatement();
 			ResultSet resultSet = stmt.executeQuery("select * from wx");
 
-			//int i = 0;
-			//List<Relation> relations = new ArrayList<Relation>();
+			int i = 0;
+			List<Relation> relations = new ArrayList<Relation>();
 			while (resultSet.next()) {
-				String text = new String(resultSet.getBytes(2), "gbk");
 				String doc_id = new String(resultSet.getBytes(1), "gbk");
-
-				MySQLUtils.insertRelations("jia", new SimpleRelationExtractor(text, doc_id)
-				.getRelations());
+				String text = new String(resultSet.getBytes(2), "gbk");
+				String[] sentences = Utils.breakParagraphIntoSentences(text);
 				
-
+				for (String sentence : sentences){					
+					/*
+					MySQLUtils.insertRelations("jia", new HasCoreRelationExtractor(sentence, doc_id)
+					.getRelations());
+					*/
+					relations.addAll(new HasCoreRelationExtractor(sentence, doc_id)
+					.getRelations());
+					
+					if (relations.size() > 50000){
+						new RelationRenderer(relations, new File("e://data/jia/jia" + (i++) + ".xls")).outputFile();
+						
+					}
+				
+				}
+				
 				//if (i++ > 2)					break;
 			}
 			//new RelationRenderer(relations, new File("test.xls")).outputFile();

@@ -59,7 +59,7 @@ public class SimpleRelationExtractor {
 		String s = null;
 		while (c1 < words1.size()) {
 			s = words1.get(c1++);
-			if (TCMNounDecider.isVerb(s)) break;			
+			if (TCMNounDecider.isNoun(s)) break;			
 		}
 		
 		int c2  = c1;
@@ -69,7 +69,7 @@ public class SimpleRelationExtractor {
 			String pred = words1.get(c2 - 1);
 			
 			if ((!obj.equalsIgnoreCase(s))&&(!pred.equalsIgnoreCase(s))
-					&& (TCMNounDecider.isVerb(obj))) {
+					&& (TCMNounDecider.isNoun(obj))) {
 				
 				if (VerbDecider.isVerb(pred)) {
 					//System.out.println(1/(c2-c1+1));

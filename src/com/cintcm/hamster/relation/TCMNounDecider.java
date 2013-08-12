@@ -21,7 +21,8 @@ public class TCMNounDecider {
 	static {
 		Scanner sc;
 		try {
-			sc = new Scanner(new File("data/words-tcm.dic"));
+			//sc = new Scanner(new File("data/words-tcm.dic"));
+			sc = new Scanner(new File("data/words-multi.dic"));
 			while (sc.hasNextLine()) {
 				String s = sc.nextLine();
 				dic.add(s);
@@ -44,7 +45,7 @@ public class TCMNounDecider {
 
 	}
 
-	public static boolean isVerb(String word) {
+	public static boolean isNoun(String word) {
 		return dic.contains(word);
 	}
 
