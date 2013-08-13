@@ -34,7 +34,7 @@ public class Jia {
 			prop.put("encoding", "utf-8");
 
 			// props.put ("charSet", "UTF-8");
-			String url = "jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=e:\\jia.mdb";
+			String url = "jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=f:\\jia.mdb";
 			// Connection conn = DriverManager.getConnection(url, "", "");
 			Connection conn = DriverManager.getConnection(url, props);
 
@@ -57,7 +57,8 @@ public class Jia {
 					.getRelations());
 					
 					if (relations.size() > 50000){
-						new RelationRenderer(relations, new File("e://data/jia/jia" + (i++) + ".xls")).outputFile();
+						//new RelationRenderer(relations, new File("e://data/jia/jia" + (i++) + ".xls")).outputFile();
+						new RelationRenderer(relations, new File("e://data/jia" + (i++) + ".xls")).outputFile();
 						
 					}
 				

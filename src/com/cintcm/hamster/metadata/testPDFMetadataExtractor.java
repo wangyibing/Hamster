@@ -64,7 +64,7 @@ public class testPDFMetadataExtractor {
 			if (c++ > 100) break;
 		}
 		
-		final File result = new File("E://docs/中医药信息学/result.xsl");
+		final File result = new File("E://docs/中医药信息学/result.xls");
 		renderer.outputFile(result);
 		
 	}
