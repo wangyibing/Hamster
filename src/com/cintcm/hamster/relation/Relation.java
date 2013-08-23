@@ -8,7 +8,16 @@ public class Relation implements Comparable<Relation> {
 	private String text;
 	private String docId;	
 	private double value;
+	private int distance;
 	
+	public int getDistance() {
+		return distance;
+	}
+
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+
 	public Relation(String subject, String predicate, String object) {
 		super();
 		this.subject = subject;

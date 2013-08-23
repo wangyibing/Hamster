@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.junit.Test;
+
+import com.cintcm.hamster.relation.CoreRelationExtractor;
 import com.cintcm.hamster.relation.HasCoreRelationExtractor;
 import com.cintcm.hamster.relation.LooseRelationExtractor;
 import com.cintcm.hamster.relation.Relation;
@@ -19,7 +22,8 @@ import com.cintcm.hamster.relation.io.excel.RelationRenderer;
 import com.cintcm.hamster.relation.io.mysql.MySQLUtils;
 
 public class Jia {
-	public static void main(String[] args) {
+	
+	public void test1() {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 			Properties props = new Properties();
@@ -34,7 +38,57 @@ public class Jia {
 			prop.put("encoding", "utf-8");
 
 			// props.put ("charSet", "UTF-8");
-			String url = "jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=f:\\jia.mdb";
+			String url = "jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=e:\\jia.mdb";
+			// Connection conn = DriverManager.getConnection(url, "", "");
+			Connection conn = DriverManager.getConnection(url, props);
+
+			Statement stmt = conn.createStatement();
+			ResultSet resultSet = stmt.executeQuery("select * from wx");
+
+			int i = 0;
+			List<Relation> relations = new ArrayList<Relation>();
+			while (resultSet.next()) {
+				String doc_id = new String(resultSet.getBytes(1), "gbk");
+				String text = new String(resultSet.getBytes(2), "gbk");
+				String[] sentences = Utils.breakParagraphIntoSentences(text);
+				
+				for (String sentence : sentences){					
+					
+					MySQLUtils.insertRelations("jia", new HasCoreRelationExtractor(sentence, doc_id)
+					.getRelations(), false);					
+				
+				}
+				
+				//if (i++ > 2)					break;
+			}
+			//new RelationRenderer(relations, new File("test.xls")).outputFile();
+			
+			stmt.close();
+			conn.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	
+	
+	public void test2() {
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			Properties props = new Properties();
+			Properties prop = new Properties();
+			// prop.put("charSet", "UTF-8");
+			// prop.put("charSet", "UTF-8");
+
+			prop.put("user", "");
+			prop.put("password", "");
+			prop.put("charSet", "utf-8");
+			prop.put("lc_ctype", "utf-8");
+			prop.put("encoding", "utf-8");
+
+			// props.put ("charSet", "UTF-8");
+			String url = "jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=e:\\jia.mdb";
 			// Connection conn = DriverManager.getConnection(url, "", "");
 			Connection conn = DriverManager.getConnection(url, props);
 
@@ -56,10 +110,10 @@ public class Jia {
 					relations.addAll(new HasCoreRelationExtractor(sentence, doc_id)
 					.getRelations());
 					
-					if (relations.size() > 50000){
+					if (relations.size() > 5000){
 						//new RelationRenderer(relations, new File("e://data/jia/jia" + (i++) + ".xls")).outputFile();
 						new RelationRenderer(relations, new File("e://data/jia" + (i++) + ".xls")).outputFile();
-						
+						relations = new ArrayList<Relation>();
 					}
 				
 				}
@@ -75,4 +129,54 @@ public class Jia {
 		}
 
 	}
+	
+	@Test
+	public void test3() {
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+			Properties props = new Properties();
+			Properties prop = new Properties();
+			// prop.put("charSet", "UTF-8");
+			// prop.put("charSet", "UTF-8");
+
+			prop.put("user", "");
+			prop.put("password", "");
+			prop.put("charSet", "utf-8");
+			prop.put("lc_ctype", "utf-8");
+			prop.put("encoding", "utf-8");
+
+			// props.put ("charSet", "UTF-8");
+			String url = "jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=e:\\jia.mdb";
+			// Connection conn = DriverManager.getConnection(url, "", "");
+			Connection conn = DriverManager.getConnection(url, props);
+
+			Statement stmt = conn.createStatement();
+			ResultSet resultSet = stmt.executeQuery("select * from wx");
+
+			int i = 0;
+			List<Relation> relations = new ArrayList<Relation>();
+			while (resultSet.next()) {
+				String doc_id = new String(resultSet.getBytes(1), "gbk");
+				String text = new String(resultSet.getBytes(2), "gbk");
+				//String[] sentences = Utils.breakParagraphIntoSentences(text);
+				
+				//for (String sentence : sentences){					
+					
+					MySQLUtils.insertPairs("jia2", new CoreRelationExtractor(text, doc_id)
+					.getRelations());					
+				
+				//}
+				
+				//if (i++ > 2)					break;
+			}
+			//new RelationRenderer(relations, new File("test.xls")).outputFile();
+			
+			stmt.close();
+			conn.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
 }

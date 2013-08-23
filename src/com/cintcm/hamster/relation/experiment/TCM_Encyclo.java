@@ -20,7 +20,7 @@ public class TCM_Encyclo {
 		for (String sentence : sentences) {
 			List<Relation> rels = new HasCoreRelationExtractor(sentence,  "中医百科全书")
 					.getRelations();
-			MySQLUtils.insertRelations("TCM_Encyclo", rels);
+			MySQLUtils.insertRelations("TCM_Encyclo", rels, true);
 		}
 		
     }

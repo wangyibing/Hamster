@@ -2,6 +2,7 @@ package com.cintcm.hamster.relation.io.mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -9,32 +10,134 @@ import java.util.List;
 import com.cintcm.hamster.relation.Relation;
 
 public class MySQLUtils {
-	
-	
+	public static Connection conn = null;
 
-	public static void insertRelations(String table, List<Relation> rels) {
-		String driver = "com.mysql.jdbc.Driver";
+	public static Connection getConnection() throws ClassNotFoundException,
+			SQLException {
 
-		// URL指向要访问的数据库名scutcs
+		if (conn == null) {
 
-		String url = "jdbc:mysql://localhost:3306/hamster";
+			String driver = "com.mysql.jdbc.Driver";
 
-		// MySQL配置时的用户名
+			// URL指向要访问的数据库名scutcs
 
-		String user = "root";
+			String url = "jdbc:mysql://localhost:3306/hamster";
 
-		// Java连接MySQL配置时的密码
+			// MySQL配置时的用户名
 
-		String password = "yutong";
+			String user = "root";
 
-		try {
+			// Java连接MySQL配置时的密码
+
+			String password = "yutong";
+
 			// 加载驱动程序
 
 			Class.forName(driver);
 
 			// 连续数据库
 
-			Connection conn = DriverManager.getConnection(url, user, password);
+			conn = DriverManager.getConnection(url, user, password);
+
+			if (!conn.isClosed())
+
+				System.out.println("Succeeded connecting to the Database!");
+
+		}
+
+		return conn;
+
+	}
+
+	public static void insertPairs(String table, List<Relation> rels) {
+
+		try {
+
+			Connection conn = getConnection();
+
+			if (!conn.isClosed())
+
+				System.out.println("Succeeded connecting to the Database!");
+
+			Statement st = conn.createStatement();
+
+			for (Relation rel : rels) {
+				String predicate = rel.getPredicate();
+				double value = rel.getValue();
+				double distance = rel.getDistance();
+
+				String query = "select predicate, frequency, distance from " + table
+						+ " where subject = '" + rel.getSubject()
+						+ "' and object = '" + rel.getObject() + "'";
+				
+				ResultSet rs = st.executeQuery(query);
+				String sql = null;
+				if (rs.next()) {
+					if (predicate == "") {
+						predicate = rs.getString("predicate");
+					} else {
+						predicate = "|" + predicate + rs.getString("predicate");
+					}
+					//value += rs.getDouble("value");
+					double frequency = rs.getDouble("frequency") + 1;
+					System.out.println(frequency);
+					distance = Math.min(distance, rs.getDouble("distance"));
+					sql = "UPDATE " + table + " SET predicate='" + predicate + "', frequency='" + frequency + "', distance='" + distance + "' WHERE subject = '" + rel.getSubject()
+						+ "' and object = '" + rel.getObject() + "'";  
+				}else{
+					
+					 sql = "insert into " + table + " values('"
+							+ rel.getSubject() + "','"+ (predicate == "" ? "" : ("|" + predicate + "|")) + "','"
+							+ rel.getObject() + "','" + value + "','" + rel.getDistance() + "','1')";
+				}
+
+				
+
+				st.executeUpdate(sql);
+			}
+
+			/*
+			 * ResultSet rs = st.executeQuery(sql); while (rs.next()) {
+			 * System.out.println(rs.getString(1)); }
+			 */
+			st.close();
+			// conn.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void insertRelations(String table, List<Relation> rels,
+			Boolean addText) {
+		// String driver = "com.mysql.jdbc.Driver";
+
+		// URL指向要访问的数据库名scutcs
+
+		// String url = "jdbc:mysql://localhost:3306/hamster";
+
+		// MySQL配置时的用户名
+
+		// String user = "root";
+
+		// Java连接MySQL配置时的密码
+
+		// String password = "yutong";
+
+		try {
+			// 加载驱动程序
+
+			// Class.forName(driver);
+
+			// 连续数据库
+
+			// Connection conn = DriverManager.getConnection(url, user,
+			// password);
+			Connection conn = getConnection();
 
 			if (!conn.isClosed())
 
@@ -45,16 +148,19 @@ public class MySQLUtils {
 			Statement st = conn.createStatement();
 
 			for (Relation rel : rels) {
-				/*
-				String sql = "insert into " + table + " values('" + rel.getSubject()
-						+ "','" + rel.getPredicate() + "','" + rel.getObject()
-						+ "','" + rel.getValue() + "','" + rel.getText()
-						+ "','" + rel.getDocId() + "')";*/
-						
-				String sql = "insert into " + table + " values('" + rel.getSubject()
-				+ "','" + rel.getPredicate() + "','" + rel.getObject()
-				+ "','" + rel.getValue() + "','','" + rel.getDocId() + "')";
-
+				String sql = null;
+				if (addText) {
+					sql = "insert into " + table + " values('"
+							+ rel.getSubject() + "','" + rel.getPredicate()
+							+ "','" + rel.getObject() + "','" + rel.getValue()
+							+ "','" + rel.getText() + "','" + rel.getDocId()
+							+ "')";
+				} else {
+					sql = "insert into " + table + " values('"
+							+ rel.getSubject() + "','" + rel.getPredicate()
+							+ "','" + rel.getObject() + "','" + rel.getValue()
+							+ "','','" + rel.getDocId() + "')";
+				}
 				st.executeUpdate(sql);
 			}
 
@@ -62,8 +168,8 @@ public class MySQLUtils {
 			 * ResultSet rs = st.executeQuery(sql); while (rs.next()) {
 			 * System.out.println(rs.getString(1)); }
 			 */
-            st.close();
-            conn.close();
+			st.close();
+			// conn.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
