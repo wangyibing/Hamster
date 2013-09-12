@@ -2,6 +2,18 @@ package com.cintcm.hamster.relation;
 
 public class Relation implements Comparable<Relation> {
 
+	
+
+
+	@Override
+	public String toString() {
+		return "Relation [subject=" + subject + ", predicate=" + predicate
+				+ ", object=" + object + ", text=" + text + ", docId=" + docId
+				+ ", value=" + value + ", distance=" + distance + "]";
+	}
+
+
+
 	private String subject;
 	private String predicate;
 	private String object;
@@ -79,11 +91,7 @@ public class Relation implements Comparable<Relation> {
 		return value;
 	}
 
-	@Override
-	public String toString() {
-		return "Relation [subject=" + subject + ", predicate=" + predicate
-				+ ", object=" + object + "]";
-	}
+	
 
 	@Override
 	public int compareTo(Relation arg) {

@@ -162,7 +162,7 @@ public class Jia {
 				
 				//for (String sentence : sentences){					
 					
-					MySQLUtils.insertPairs("jia2", new CoreRelationExtractor(text, doc_id)
+					MySQLUtils.insertPairs("relation", new CoreRelationExtractor(text, doc_id)
 					.getRelations());					
 				
 				//}

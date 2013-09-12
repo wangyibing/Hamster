@@ -44,7 +44,7 @@ public class CoreRelationExtractor {
 	}
 
 	private void extractRelations() {
-		
+		System.out.println("begin");
 		String s = null;
 
 		for (int c1 = 0; c1 < words.size(); c1++) {
@@ -103,6 +103,7 @@ public class CoreRelationExtractor {
 			}
 
 		}
+		System.out.println("end");
 
 	}
 

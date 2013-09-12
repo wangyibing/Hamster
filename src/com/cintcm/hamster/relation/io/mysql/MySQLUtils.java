@@ -65,30 +65,44 @@ public class MySQLUtils {
 				String predicate = rel.getPredicate();
 				double value = rel.getValue();
 				double distance = rel.getDistance();
-
-				String query = "select predicate, frequency, distance from " + table
+				String docId = rel.getDocId();
+                
+				String query = "select predicate, frequency, distance, docs from " + table
 						+ " where subject = '" + rel.getSubject()
 						+ "' and object = '" + rel.getObject() + "'";
+				
 				
 				ResultSet rs = st.executeQuery(query);
 				String sql = null;
 				if (rs.next()) {
-					if (predicate == "") {
+					if ((predicate == "")||(rs.getString("predicate").contains("|" + predicate + "|"))) {
 						predicate = rs.getString("predicate");
 					} else {
 						predicate = "|" + predicate + rs.getString("predicate");
 					}
+					
+					String docs = rs.getString("docs");
+					if ((docId != "")&&(!docs.contains("|" + docId + "|"))) {
+						System.out.println(docs + " vs. " + docId);
+						docs = "|" + docId + docs;
+					}
 					//value += rs.getDouble("value");
-					double frequency = rs.getDouble("frequency") + 1;
-					System.out.println(frequency);
+					double frequency = rs.getDouble("frequency");
+					if (!(rs.getString("docs").contains("|" + docId + "|"))){
+						frequency++;
+					}
+					
+					
 					distance = Math.min(distance, rs.getDouble("distance"));
-					sql = "UPDATE " + table + " SET predicate='" + predicate + "', frequency='" + frequency + "', distance='" + distance + "' WHERE subject = '" + rel.getSubject()
+					sql = "UPDATE " + table + " SET predicate='" + predicate + "', docs='" + docs + "', frequency='" + frequency + "', distance='" + distance + "' WHERE subject = '" + rel.getSubject()
 						+ "' and object = '" + rel.getObject() + "'";  
+					
 				}else{
 					
 					 sql = "insert into " + table + " values('"
 							+ rel.getSubject() + "','"+ (predicate == "" ? "" : ("|" + predicate + "|")) + "','"
-							+ rel.getObject() + "','" + value + "','" + rel.getDistance() + "','1')";
+							+ rel.getObject() + "','" + value + "','" + rel.getDistance() + "','1','" + (docId == "" ? "" : ("|" + docId + "|")) + "')";
+					 
 				}
 
 				
