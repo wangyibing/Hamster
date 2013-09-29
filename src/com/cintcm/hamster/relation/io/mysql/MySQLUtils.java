@@ -21,7 +21,7 @@ public class MySQLUtils {
 
 			// URL指向要访问的数据库名scutcs
 
-			String url = "jdbc:mysql://localhost:3306/hamster";
+			String url = "jdbc:mysql://localhost:3306/docs";
 
 			// MySQL配置时的用户名
 
@@ -48,6 +48,8 @@ public class MySQLUtils {
 		return conn;
 
 	}
+	
+	
 
 	public static void insertPairs(String table, List<Relation> rels) {
 
@@ -60,8 +62,10 @@ public class MySQLUtils {
 				System.out.println("Succeeded connecting to the Database!");
 
 			Statement st = conn.createStatement();
-
+            int i = 0;
+            System.out.println("insert relations: " + rels.size() );
 			for (Relation rel : rels) {
+				 System.out.println("insert relation: " + (i++));
 				String predicate = rel.getPredicate();
 				double value = rel.getValue();
 				double distance = rel.getDistance();
@@ -83,7 +87,7 @@ public class MySQLUtils {
 					
 					String docs = rs.getString("docs");
 					if ((docId != "")&&(!docs.contains("|" + docId + "|"))) {
-						System.out.println(docs + " vs. " + docId);
+						
 						docs = "|" + docId + docs;
 					}
 					//value += rs.getDouble("value");
