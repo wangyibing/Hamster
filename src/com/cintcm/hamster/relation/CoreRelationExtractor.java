@@ -44,7 +44,7 @@ public class CoreRelationExtractor {
 	}
 
 	private void extractRelations() {
-		System.out.println("begin");
+		
 		String s = null;
 
 		for (int c1 = 0; c1 < words.size(); c1++) {
@@ -56,8 +56,8 @@ public class CoreRelationExtractor {
 					if (obj.equalsIgnoreCase(s))
 						continue;
 
-					if (TCMNounDecider.isNoun(obj)) {
-					//if (TCMCoreDecider.isCore(obj)) {
+					//if (TCMNounDecider.isNoun(obj)) {
+					if (TCMCoreDecider.isCore(obj)) {
 						Set<Integer> verb_nums = getVerbNums(c1, c2);
 						boolean verbFound = false;
 						for (Integer verb_num : verb_nums) {
@@ -103,7 +103,7 @@ public class CoreRelationExtractor {
 			}
 
 		}
-		System.out.println("end");
+		
 
 	}
 

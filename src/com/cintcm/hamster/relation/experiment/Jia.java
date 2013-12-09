@@ -17,12 +17,15 @@ import com.cintcm.hamster.relation.CoreRelationExtractor;
 import com.cintcm.hamster.relation.HasCoreRelationExtractor;
 import com.cintcm.hamster.relation.LooseRelationExtractor;
 import com.cintcm.hamster.relation.Relation;
+import com.cintcm.hamster.relation.RelationManager;
 import com.cintcm.hamster.relation.SimpleRelationExtractor;
 import com.cintcm.hamster.relation.Utils;
 import com.cintcm.hamster.relation.io.excel.RelationRenderer;
 import com.cintcm.hamster.relation.io.mysql.MySQLUtils;
 
 public class Jia {
+
+	private CoreRelationExtractor coreRelationExtractor;
 
 	public void test1() {
 		try {
@@ -185,7 +188,6 @@ public class Jia {
 
 	}
 
-	@Test
 	public void test4() {
 		try {
 			Connection conn = MySQLUtils.getConnection();
@@ -194,14 +196,15 @@ public class Jia {
 
 			int num_articles = getNumArticles(stmt);
 
-			for (int i = 1; i <= num_articles; i++) {
+			for (int i = 86; i <= num_articles; i++) {
 				ResultSet resultSet = stmt
-						.executeQuery("select id, description from resource where id=" + i);
+						.executeQuery("select id, description from resource where id="
+								+ i);
 
 				if (resultSet.next()) {
 					String doc_id = resultSet.getString(1);
 					String text = resultSet.getString(2);
-					System.out.println(doc_id + ": " + text);
+					System.out.println("Extracting from doc: " + doc_id);
 					// String[] sentences =
 					// Utils.breakParagraphIntoSentences(text);
 
@@ -228,8 +231,107 @@ public class Jia {
 
 	}
 
+	public void test5() {
+		try {
+			Connection conn = MySQLUtils.getConnection();
+
+			Statement stmt = conn.createStatement();
+
+			int num_articles = getNumArticles(stmt);
+
+			for (int i = 1; i <= num_articles; i++) {
+				ResultSet resultSet = stmt
+						.executeQuery("select id, description from resource where id="
+								+ i);
+
+				if (resultSet.next()) {
+					String doc_id = resultSet.getString(1);
+					String text = resultSet.getString(2);
+					System.out.println("Extracting from doc: " + doc_id);
+					String[] sentences = Utils
+							.breakParagraphIntoSentences(text);
+
+					for (String sentence : sentences) {
+
+						MySQLUtils.insertPairsQuickly("relation",
+								new CoreRelationExtractor(sentence, doc_id)
+										.getRelations());
+
+					}
+
+					// if (i++ > 2) break;
+				}
+				// new RelationRenderer(relations, new
+				// File("test.xls")).outputFile();
+				resultSet.close();
+			}
+
+			stmt.close();
+			conn.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+	@Test
+	public void test6() {
+		try {
+			Connection conn = MySQLUtils.getConnection();
+
+			Statement stmt = conn.createStatement();
+
+			int num_articles = getNumArticles(stmt);
+			int cur_article = 20001;
+			//while (cur_article <= num_articles) {
+				//System.gc();
+				RelationManager relationManager = new RelationManager();
+				for (int i = 1; (i <= 10000) && (cur_article <= num_articles); i++) {
+					
+					ResultSet resultSet = stmt
+							.executeQuery("select id, description from resource where id="
+									+ (cur_article++));
+					
+					
+
+					if (resultSet.next()) {
+						String doc_id = resultSet.getString(1);
+						String text = resultSet.getString(2);
+						System.out.println("Extracting from doc: " + doc_id);
+						//String[] sentences = Utils.breakParagraphIntoSentences(text);
+
+						
+							coreRelationExtractor = new CoreRelationExtractor(
+									text, doc_id);
+							List<Relation> relations = coreRelationExtractor
+									.getRelations();
+							relationManager.addRelations(relations);
+						
+
+						// if (i++ > 2) break;
+					}
+					// new RelationRenderer(relations, new
+					// File("test.xls")).outputFile();
+					resultSet.close();
+				}
+				
+				relationManager.insertPairs("relation");
+				
+			
+			//}
+
+			stmt.close();
+			
+			conn.close();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
 	private int getNumArticles(Statement stmt) throws SQLException {
-		ResultSet rs = stmt.executeQuery("select count(*) as c from resource");
+		ResultSet rs = stmt.executeQuery("select max(id) as c from resource");
 		rs.next();
 		int num_articles = rs.getInt(1);
 		rs.close();

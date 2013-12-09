@@ -1,7 +1,5 @@
 package com.cintcm.hamster.relation;
 
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,21 +20,19 @@ import com.chenlb.mmseg4j.example.Complex;
 import com.cintcm.hamster.db.HibernateSessionFactory;
 import com.cintcm.hamster.db.tcmls.TTerm;
 
-
-
 public class Utils {
 	private static Complex complex = new Complex();
-	
-	public static List<List<String>> breakSentence(String txt){
-		StringTokenizer st = new StringTokenizer(txt,",，;；");
+
+	public static List<List<String>> breakSentence(String txt) {
+		StringTokenizer st = new StringTokenizer(txt, ",，;；");
 		List<List<String>> words = new ArrayList<List<String>>();
-	    while(st.hasMoreTokens() ){
-	    	words.add(splitWords(st.nextToken()));
-	    }
-	    return words;
+		while (st.hasMoreTokens()) {
+			words.add(splitWords(st.nextToken()));
+		}
+		return words;
 	}
-	
-	public static List<String> splitWords(String txt){		
+
+	public static List<String> splitWords(String txt) {
 		String rst = "";
 		try {
 			rst = complex.segWords(txt, "|");
@@ -46,27 +42,37 @@ public class Utils {
 		}
 		return Arrays.asList(rst.split("\\|"));
 	}
-	
-	public static String[] breakParagraphIntoSentences(String  paragraph){
-		String sentences[] = paragraph.split("[。]");
+
+	public static Set<String> splitWordsAsSet(String txt) {
+
+		String[] strings = txt.split("\\|");
+		Set<String> s = new HashSet(Arrays.asList(strings));
+		s.remove("");
+		return s;
+		
+	}
+
+	public static String[] breakParagraphIntoSentences(String paragraph) {
+		// String sentences[] = paragraph.split("[。]");
+		String sentences[] = paragraph.split("\\.|。");
 		return sentences;
 	}
-	
-	public static String[] breakFileIntoSentences(File file){
+
+	public static String[] breakFileIntoSentences(File file) {
 		StringBuilder sb = new StringBuilder();
 		Scanner scanner;
 		try {
 			scanner = new Scanner(file);
-			while(scanner.hasNextLine()){
-	    		sb.append(scanner.nextLine());
-	    	} 
+			while (scanner.hasNextLine()) {
+				sb.append(scanner.nextLine());
+			}
 		} catch (FileNotFoundException e) {
-			
+
 			e.printStackTrace();
 		}
-    	    	
+
 		String sentences[] = sb.toString().split("[。]");
 		return sentences;
 	}
-	
+
 }
